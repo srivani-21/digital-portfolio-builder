@@ -1,54 +1,45 @@
-// Portfolio.js - Defines what a "Portfolio" looks like in the database
+// models/Portfolio.js
 
 const mongoose = require('mongoose');
 
 const portfolioSchema = new mongoose.Schema(
   {
-    // Links this portfolio to a user
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    // Basic info
-    fullName: { type: String, required: true },
-    tagline: { type: String }, // e.g., "Full Stack Developer | B.Tech Student"
-    about: { type: String },
-    email: { type: String },
-    phone: { type: String },
-    linkedin: { type: String },
-    github: { type: String },
 
-    // Arrays of professional details
-    skills: [String],           // e.g., ["React", "Node.js", "MongoDB"]
-    experience: [
-      {
-        company: String,
-        role: String,
-        duration: String,
-        description: String,
-      },
-    ],
-    projects: [
-      {
-        title: String,
-        description: String,
-        techStack: [String],
-        link: String,
-      },
-    ],
+    // New fields
+    username:   { type: String, unique: true, sparse: true, trim: true },
+    profession: { type: String, default: 'other' },
+    template:   { type: String, enum: ['modern','minimal','creative'], default: 'modern' },
+    views:      { type: Number, default: 0 },
+
+    // Basic info
+    fullName: { type: String, required: true, trim: true },
+    tagline:  { type: String, default: '' },
+    about:    { type: String, default: '' },
+    email:    { type: String, default: '' },
+    phone:    { type: String, default: '' },
+    linkedin: { type: String, default: '' },
+    github:   { type: String, default: '' },
+
+    // Arrays
+    skills:       [String],
     achievements: [String],
 
-    // Admin approval status
+    // Text fields
+    experience: { type: String, default: '' },
+    projects:   { type: String, default: '' },
+
+    // Admin approval
     status: {
       type: String,
       enum: ['draft', 'pending', 'approved', 'rejected'],
       default: 'draft',
     },
-    adminComment: {
-      type: String,  // Admin can leave a reason if rejected
-      default: '',
-    },
+    adminComment: { type: String, default: '' },
   },
   { timestamps: true }
 );
