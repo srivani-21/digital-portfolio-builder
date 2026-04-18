@@ -75,27 +75,55 @@ export default function PortfolioView() {
 }
 
 // Shared sections across all templates
+// Replace the PortfolioSections component in PortfolioView.jsx
+
 const PortfolioSections = ({ portfolio: p, theme }) => {
   const isModern   = theme === 'modern';
   const isMinimal  = theme === 'minimal';
   const isCreative = theme === 'creative';
 
-  const sectionStyle = {
-    modern:   { background:'#13131a', border:'1px solid #2a2a3d', borderRadius:16, padding:28, marginBottom:20 },
-    minimal:  { borderBottom:'1px solid #2a2a3d', paddingBottom:28, marginBottom:28 },
-    creative: { background:'rgba(255,255,255,0.03)', border:'1px solid rgba(108,99,255,0.2)', borderRadius:16, padding:28, marginBottom:20 },
-  };
-  const ss = sectionStyle[theme];
+  const profColor = {
+    developer: '#6c63ff',
+    designer:  '#ff6584',
+    teacher:   '#22d3a5',
+    marketer:  '#f59e0b',
+    other:     '#a0a0c0',
+  }[p.profession] || '#6c63ff';
 
-  const headStyle = {
-    modern:   { fontFamily:'Syne,sans-serif', fontSize:16, fontWeight:700, color:'#6c63ff', marginBottom:16, textTransform:'uppercase', letterSpacing:'1px' },
-    minimal:  { fontFamily:'Syne,sans-serif', fontSize:13, fontWeight:700, color:'#7a7a9a', marginBottom:14, textTransform:'uppercase', letterSpacing:'2px' },
-    creative: { fontFamily:'Syne,sans-serif', fontSize:14, fontWeight:700, color:'#ff6584', marginBottom:16, textTransform:'uppercase', letterSpacing:'1.5px' },
+  // Section wrapper style per template
+  const ss = {
+    modern:   { background:'#13131a', border:'1px solid #2a2a3d',
+                borderRadius:16, padding:28, marginBottom:20 },
+    minimal:  { borderBottom:'1px solid #2a2a3d', paddingBottom:28, marginBottom:28 },
+    creative: { background:'rgba(255,255,255,0.03)',
+                border:`1px solid ${profColor}20`,
+                borderRadius:16, padding:28, marginBottom:20 },
+  }[theme];
+
+  // Section heading style per template
+  const hs = {
+    modern:   { fontFamily:'Syne,sans-serif', fontSize:13, fontWeight:700,
+                color: profColor, marginBottom:16,
+                textTransform:'uppercase', letterSpacing:'1px' },
+    minimal:  { fontFamily:'Syne,sans-serif', fontSize:12, fontWeight:700,
+                color:'#7a7a9a', marginBottom:14,
+                textTransform:'uppercase', letterSpacing:'2px' },
+    creative: { fontFamily:'Syne,sans-serif', fontSize:13, fontWeight:700,
+                color: profColor, marginBottom:16,
+                textTransform:'uppercase', letterSpacing:'1.5px' },
+  }[theme];
+
+  // Chip style per template
+  const chipStyle = {
+    padding:'6px 16px', borderRadius:20, fontSize:13, fontWeight:500,
+    background: isMinimal ? '#1c1c27' : `${profColor}14`,
+    border:`1px solid ${isMinimal ? '#2a2a3d' : profColor+'28'}`,
+    color: isMinimal ? '#a0a0c0' : profColor,
   };
-  const hs = headStyle[theme];
 
   return (
     <>
+      {/* About — all professions */}
       {p.about && (
         <div style={ss}>
           <div style={hs}>About</div>
@@ -103,48 +131,165 @@ const PortfolioSections = ({ portfolio: p, theme }) => {
         </div>
       )}
 
-      {p.skills?.length > 0 && (
+      {/* Developer — Skills + GitHub + Projects */}
+      {p.profession === 'developer' && (
+        <>
+          {p.skills?.length > 0 && (
+            <div style={ss}>
+              <div style={hs}>Skills</div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                {p.skills.map(sk => <span key={sk} style={chipStyle}>{sk}</span>)}
+              </div>
+            </div>
+          )}
+          {p.projects && (
+            <div style={ss}>
+              <div style={hs}>Projects</div>
+              <p style={{ color:'#a0a0c0', fontSize:14, lineHeight:1.8 }}>{p.projects}</p>
+            </div>
+          )}
+          {p.github && (
+            <div style={ss}>
+              <div style={hs}>GitHub</div>
+              <a href={`https://${p.github}`} target="_blank" rel="noreferrer"
+                style={{ color: profColor, fontSize:14 }}>
+                🐙 {p.github}
+              </a>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Designer — Tools + Portfolio URL + Specialization */}
+      {p.profession === 'designer' && (
+        <>
+          {p.tools?.length > 0 && (
+            <div style={ss}>
+              <div style={hs}>Design Tools</div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                {p.tools.map(t => <span key={t} style={chipStyle}>{t}</span>)}
+              </div>
+            </div>
+          )}
+          {p.specialization && (
+            <div style={ss}>
+              <div style={hs}>Specialization</div>
+              <p style={{ color:'#a0a0c0', fontSize:14 }}>{p.specialization}</p>
+            </div>
+          )}
+          {p.portfolio_url && (
+            <div style={ss}>
+              <div style={hs}>Portfolio</div>
+              <a href={`https://${p.portfolio_url}`} target="_blank" rel="noreferrer"
+                style={{ color: profColor, fontSize:14 }}>
+                🎨 {p.portfolio_url}
+              </a>
+            </div>
+          )}
+          {p.projects && (
+            <div style={ss}>
+              <div style={hs}>Work Description</div>
+              <p style={{ color:'#a0a0c0', fontSize:14, lineHeight:1.8 }}>{p.projects}</p>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Teacher — Subjects + Institution + Teaching Level */}
+      {p.profession === 'teacher' && (
+        <>
+          {p.subjects?.length > 0 && (
+            <div style={ss}>
+              <div style={hs}>Subjects Taught</div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                {p.subjects.map(sub => <span key={sub} style={chipStyle}>{sub}</span>)}
+              </div>
+            </div>
+          )}
+          {p.institution && (
+            <div style={ss}>
+              <div style={hs}>Institution</div>
+              <p style={{ color:'#a0a0c0', fontSize:14 }}>🏫 {p.institution}</p>
+              {p.teachingLevel && (
+                <p style={{ color:'#7a7a9a', fontSize:13, marginTop:6 }}>
+                  Level: {p.teachingLevel}
+                </p>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Marketer — Skills + Tools + Campaigns */}
+      {p.profession === 'marketer' && (
+        <>
+          {p.skills?.length > 0 && (
+            <div style={ss}>
+              <div style={hs}>Marketing Skills</div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                {p.skills.map(sk => <span key={sk} style={chipStyle}>{sk}</span>)}
+              </div>
+            </div>
+          )}
+          {p.tools?.length > 0 && (
+            <div style={ss}>
+              <div style={hs}>Tools Used</div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                {p.tools.map(t => <span key={t} style={chipStyle}>{t}</span>)}
+              </div>
+            </div>
+          )}
+          {p.campaigns && (
+            <div style={ss}>
+              <div style={hs}>Campaigns</div>
+              <p style={{ color:'#a0a0c0', fontSize:14, lineHeight:1.8 }}>{p.campaigns}</p>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* All professions — Experience */}
+      {p.experience && (
         <div style={ss}>
-          <div style={hs}>Skills</div>
-          <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
-            {p.skills.map(sk => (
-              <span key={sk} style={{ padding:'6px 16px', borderRadius:20,
-                background: isMinimal ? '#1c1c27' : isCreative ? 'rgba(255,101,132,0.12)' : 'rgba(108,99,255,0.12)',
-                border: `1px solid ${isMinimal ? '#2a2a3d' : isCreative ? 'rgba(255,101,132,0.25)' : 'rgba(108,99,255,0.25)'}`,
-                color: isMinimal ? '#a0a0c0' : isCreative ? '#ff6584' : '#6c63ff',
-                fontSize:13, fontWeight:500 }}>
-                {sk}
-              </span>
-            ))}
-          </div>
+          <div style={hs}>Experience</div>
+          <p style={{ color:'#a0a0c0', fontSize:14, lineHeight:1.8 }}>{p.experience}</p>
         </div>
       )}
 
+      {/* All professions — Achievements */}
       {p.achievements?.length > 0 && (
         <div style={ss}>
           <div style={hs}>Achievements</div>
           {p.achievements.map((a, i) => (
-            <div key={i} style={{ display:'flex', gap:10, marginBottom:8 }}>
-              <span style={{ color:'#f5c842' }}>🏆</span>
-              <span style={{ color:'#a0a0c0', fontSize:14 }}>{a}</span>
+            <div key={i} style={{ display:'flex', gap:10, marginBottom:10 }}>
+              <span style={{ color:'#f5c842', fontSize:16 }}>🏆</span>
+              <span style={{ color:'#a0a0c0', fontSize:14, lineHeight:1.6 }}>{a}</span>
             </div>
           ))}
         </div>
       )}
 
+      {/* All professions — Contact */}
       {(p.email || p.phone || p.linkedin || p.github) && (
         <div style={ss}>
           <div style={hs}>Contact</div>
-          <div style={{ display:'flex', flexWrap:'wrap', gap:12 }}>
-            {p.email    && <a href={`mailto:${p.email}`}    style={s.contactLink}>📧 {p.email}</a>}
-            {p.phone    && <span style={s.contactLink}>📞 {p.phone}</span>}
-            {p.github   && <a href={`https://${p.github}`}  target="_blank" rel="noreferrer" style={s.contactLink}>🐙 GitHub</a>}
-            {p.linkedin && <a href={`https://${p.linkedin}`} target="_blank" rel="noreferrer" style={s.contactLink}>💼 LinkedIn</a>}
+          <div style={{ display:'flex', flexWrap:'wrap', gap:10 }}>
+            {p.email    && <a href={`mailto:${p.email}`} style={{ ...contactLinkStyle, borderColor:`${profColor}30`, color: profColor }}>📧 {p.email}</a>}
+            {p.phone    && <span style={{ ...contactLinkStyle, borderColor:'#2a2a3d', color:'#a0a0c0' }}>📞 {p.phone}</span>}
+            {p.linkedin && <a href={`https://${p.linkedin}`} target="_blank" rel="noreferrer" style={{ ...contactLinkStyle, borderColor:`${profColor}30`, color: profColor }}>💼 LinkedIn</a>}
+            {p.github   && p.profession !== 'developer' && (
+              <a href={`https://${p.github}`} target="_blank" rel="noreferrer" style={{ ...contactLinkStyle, borderColor:`${profColor}30`, color: profColor }}>🐙 GitHub</a>
+            )}
           </div>
         </div>
       )}
     </>
   );
+};
+
+const contactLinkStyle = {
+  padding:'8px 16px', background:'#1c1c27', border:'1px solid',
+  borderRadius:8, fontSize:13, display:'inline-block',
 };
 
 const s = {
