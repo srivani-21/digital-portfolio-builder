@@ -1,17 +1,16 @@
-// authRoutes.js
-// This file maps URLs → controller functions
-// Think of it as a "traffic director"
+// routes/authRoutes.js
 
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 
-// Import the controller functions
-const { registerUser, loginUser } = require('../controllers/authController');
+const { registerUser, loginUser, updateProfile, changePassword } = require('../controllers/authController');
+const { protect } = require('../middleware/authMiddleware');
 
-// When someone sends POST to /api/auth/register → run registerUser()
 router.post('/register', registerUser);
+router.post('/login',    loginUser);
 
-// When someone sends POST to /api/auth/login → run loginUser()
-router.post('/login', loginUser);
+// Settings routes — protected
+router.put('/update-profile',  protect, updateProfile);
+router.put('/change-password', protect, changePassword);
 
 module.exports = router;
